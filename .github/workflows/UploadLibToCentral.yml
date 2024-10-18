@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    size: large
 
     steps:
       - name: Checkout code
@@ -16,15 +15,27 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version:
+
+      - name: Decode and save SecRing file
+        run: |
+          echo "${{ secrets.SIGNING_SECRET_KEY_RING_FILE_BASE64 }}" | base64 --decode > secring.gpg
+          echo "signing.secretKeyRingFile=$(pwd)/secring.gpg" >> gradle.properties
+
+      - name: Update gradle.properties
+        run: |
+          echo "" >> gradle.properties
+          echo "mavenCentralUsername=${{ secrets.MAVEN_USERNAME }}" >> gradle.properties
+          echo "mavenCentralPassword=${{ secrets.MAVEN_PASSWORD }}" >> gradle.properties
+          echo "signing.keyId=${{ secrets.SIGNING_KEY_ID }}" >> gradle.properties
+          echo "signing.password=${{ secrets.SIGNING_PASSWORD }}" >> gradle.properties
 
       - name: Build with Gradle
         run: ./gradlew build
 
       - name: Publish to Maven Central
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: ./gradlew publish --no-configuration-cache
+
+      - name: Clean up SecRing file
+        if: always()
+        run: rm -f secring.gpg
