@@ -2,7 +2,12 @@ package com.kashif.cameraK.builder
 
 
 import com.kashif.cameraK.controller.CameraController
-import com.kashif.cameraK.enums.*
+import com.kashif.cameraK.enums.CameraLens
+import com.kashif.cameraK.enums.Directory
+import com.kashif.cameraK.enums.FlashMode
+import com.kashif.cameraK.enums.ImageFormat
+import com.kashif.cameraK.enums.Rotation
+import com.kashif.cameraK.enums.TorchMode
 import com.kashif.cameraK.plugins.CameraPlugin
 import com.kashif.cameraK.utils.InvalidConfigurationException
 
@@ -66,5 +71,10 @@ class IOSCameraControllerBuilder : CameraControllerBuilder {
         )
 
         return cameraController
+    }
+
+    override fun setTorchMode(torchMode: TorchMode): CameraControllerBuilder {
+        this.torchMode = torchMode
+        return this
     }
 }
