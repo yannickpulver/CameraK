@@ -26,6 +26,7 @@ kotlin {
         it.binaries.framework {
             baseName = "imagesaverplugin"
             isStatic = true
+            binaryOption("bundleId", "com.kashif.image_saver_plugin")
         }
     }
 

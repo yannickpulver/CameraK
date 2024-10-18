@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest-xlarge
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -29,6 +29,9 @@ jobs:
           echo "mavenCentralPassword=${{ secrets.MAVEN_PASSWORD }}" >> gradle.properties
           echo "signing.keyId=${{ secrets.SIGNING_KEY_ID }}" >> gradle.properties
           echo "signing.password=${{ secrets.SIGNING_PASSWORD }}" >> gradle.properties
+
+      #      - name: Build with Gradle
+      #        run: ./gradlew build
 
       - name: Publish to Maven Central
         run: ./gradlew publish --no-configuration-cache

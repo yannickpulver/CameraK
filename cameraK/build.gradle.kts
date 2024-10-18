@@ -26,6 +26,7 @@ kotlin {
         it.binaries.framework {
             baseName = "cameraK"
             isStatic = true
+            binaryOption("bundleId", "com.kashif.camera_compose")
         }
     }
 

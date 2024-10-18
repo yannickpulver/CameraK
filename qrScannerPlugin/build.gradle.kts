@@ -26,6 +26,7 @@ kotlin {
         it.binaries.framework {
             baseName = "qrScannerPlugin"
             isStatic = true
+            binaryOption("bundleId", "com.kashif.qr_scanner_plugin")
         }
     }
 
