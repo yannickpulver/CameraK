@@ -17,6 +17,13 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
+      - name: Verify GPG Key
+        run: |
+          if [ -z "${{ secrets.GPG_PRIVATE_KEY }}" ]; then
+            echo "GPG key is not set. Please add GPG_PRIVATE_KEY to your repository secrets."
+            exit 1
+          fi
+
       - name: Import GPG key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private.key
@@ -24,7 +31,6 @@ jobs:
           rm private.key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-
 
       - name: Decode and save SecRing file
         run: |
