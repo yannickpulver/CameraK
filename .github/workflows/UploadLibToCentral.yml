@@ -14,8 +14,17 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
+          distribution: 'zulu'
           java-version: 17
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private.key
+          gpg --batch --import private.key
+          rm private.key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
 
       - name: Decode and save SecRing file
         run: |
@@ -29,9 +38,6 @@ jobs:
           echo "mavenCentralPassword=${{ secrets.MAVEN_PASSWORD }}" >> gradle.properties
           echo "signing.keyId=${{ secrets.SIGNING_KEY_ID }}" >> gradle.properties
           echo "signing.password=${{ secrets.SIGNING_PASSWORD }}" >> gradle.properties
-
-      #      - name: Build with Gradle
-      #        run: ./gradlew build
 
       - name: Publish to Maven Central
         run: ./gradlew publish --no-configuration-cache
