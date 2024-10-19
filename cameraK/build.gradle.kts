@@ -96,6 +96,8 @@ mavenPublishing {
         version = "0.0.8"
     )
 
+
+
     pom {
         name.set("CameraK")
         description.set("Camera Library to work on both Android/iOS.")
@@ -122,6 +124,9 @@ mavenPublishing {
         }
     }
 
+    // Configure publishing to Maven Central
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    // Enable GPG signing for all publications
     signAllPublications()
 }
