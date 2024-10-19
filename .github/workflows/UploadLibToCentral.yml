@@ -17,28 +17,26 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
-      - name: Decode and save SecRing file
+      - name: Decode and save GPG key
         run: |
-          echo "${{ secrets.SIGNING_SECRET_KEY_RING_FILE_BASE64 }}" | base64 --decode > secring.gpg
-          echo "signing.secretKeyRingFile=$(pwd)/secring.gpg" >> gradle.properties
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.gpg
+          gpg --import --batch private_key.gpg
 
       - name: Update gradle.properties
         run: |
           echo "" >> gradle.properties
-          echo "mavenCentralUsername=${{ secrets.MAVEN_USERNAME }}" >> gradle.properties
-          echo "mavenCentralPassword=${{ secrets.MAVEN_PASSWORD }}" >> gradle.properties
           echo "signing.keyId=${{ secrets.SIGNING_KEY_ID }}" >> gradle.properties
           echo "signing.password=${{ secrets.SIGNING_PASSWORD }}" >> gradle.properties
+          echo "signing.secretKeyRingFile=$(pwd)/private_key.gpg" >> gradle.properties
+          echo "mavenCentralUsername=${{ secrets.MAVEN_USERNAME }}" >> gradle.properties
+          echo "mavenCentralPassword=${{ secrets.MAVEN_PASSWORD }}" >> gradle.properties
 
       - name: Publish to Maven Central
         run: ./gradlew publish --no-configuration-cache
 
-      - name: Clean up SecRing file
+      - name: Clean up GPG key
         if: always()
-        run: rm -f secring.gpg
+        run: rm -f private_key.gpg
