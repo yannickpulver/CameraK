@@ -115,3 +115,8 @@ mavenPublishing {
     // Enable GPG signing for all publications
     signAllPublications()
 }
+
+// Explicitly set signing configuration
+extra["signing.keyId"] = System.getenv("ORG_GRADLE_PROJECT_signingKeyId")
+extra["signing.password"] = System.getenv("ORG_GRADLE_PROJECT_signingPassword")
+extra["signing.secretKeyRingFile"] = System.getenv("ORG_GRADLE_PROJECT_signingSecretKeyRingFile")
