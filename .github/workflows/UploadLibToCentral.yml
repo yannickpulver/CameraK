@@ -20,10 +20,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Decode and save GPG key
+      - name: Import GPG key
         run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.gpg
-          gpg --import --batch private_key.gpg
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.gpg
+          gpg --batch --import private_key.gpg
 
       - name: Update gradle.properties
         run: |
@@ -35,7 +35,7 @@ jobs:
           echo "mavenCentralPassword=${{ secrets.MAVEN_PASSWORD }}" >> gradle.properties
 
       - name: Publish to Maven Central
-        run: ./gradlew publish --no-configuration-cache
+        run: ./gradlew publish --no-configuration-cache --stacktrace
 
       - name: Clean up GPG key
         if: always()
